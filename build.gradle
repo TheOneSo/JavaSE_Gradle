@@ -1,0 +1,56 @@
+plugins {
+  //support Idea IDE
+  id 'idea'
+  id "io.spring.dependency-management" version "1.0.9.RELEASE"
+  // Build uber-jar
+  id 'com.github.johnrengelman.shadow' version '5.2.0' apply false
+}
+
+idea {
+  project {
+    languageLevel = 13
+  }
+  module {
+    downloadJavadoc = true
+    downloadSources = true
+  }
+}
+
+group 'com.com.com.oneso'
+version = '1.0-SNAPSHOT'
+
+allprojects {
+  group "com.com.com.oneso"
+
+  repositories {
+    mavenCentral()
+  }
+
+  ext {
+    guavaVersion = "29.0-jre"
+  }
+
+  apply plugin: "io.spring.dependency-management"
+  dependencyManagement {
+    dependencies {
+      imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:2.3.0.RELEASE")
+      }
+      dependency("com.google.guava:guava:${guavaVersion}")
+    }
+  }
+
+  configurations.all {
+    resolutionStrategy {
+      failOnVersionConflict()
+    }
+  }
+}
+
+task manadgedVersions {
+  doLast {
+    dependencyManagement.managedVersions.each {
+      println it
+    }
+  }
+}
