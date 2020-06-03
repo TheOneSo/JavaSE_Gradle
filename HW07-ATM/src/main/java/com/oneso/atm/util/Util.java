@@ -1,7 +1,7 @@
-package com.oneso.util;
+package com.oneso.atm.util;
 
-import com.oneso.cells.Cell;
-import com.oneso.control.Manager;
+import com.oneso.atm.cells.Cell;
+import com.oneso.atm.control.Manager;
 
 public class Util {
 

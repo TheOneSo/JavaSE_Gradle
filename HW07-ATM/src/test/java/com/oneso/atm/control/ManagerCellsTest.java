@@ -1,8 +1,8 @@
-package com.oneso.control;
+package com.oneso.atm.control;
 
-import com.oneso.cells.Cell;
-import com.oneso.cells.CellMoney;
-import com.oneso.money.Money;
+import com.oneso.atm.cells.Cell;
+import com.oneso.atm.cells.CellMoney;
+import com.oneso.atm.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

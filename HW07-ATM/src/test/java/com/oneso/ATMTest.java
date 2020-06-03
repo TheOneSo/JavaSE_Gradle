@@ -1,10 +1,11 @@
 package com.oneso;
 
-import com.oneso.cells.Cell;
-import com.oneso.control.Manager;
-import com.oneso.control.ManagerCells;
-import com.oneso.money.Money;
-import com.oneso.util.Util;
+import com.oneso.atm.ATM;
+import com.oneso.atm.cells.Cell;
+import com.oneso.atm.control.Manager;
+import com.oneso.atm.control.ManagerCells;
+import com.oneso.atm.money.Money;
+import com.oneso.atm.util.Util;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class ATMTest {
     @BeforeEach
     void setup() {
         manager = new ManagerCells();
-        atm = new ATM(manager);
+        atm = new ATM(manager, "test");
     }
 
     @Test
@@ -40,7 +41,7 @@ class ATMTest {
     @DisplayName("Should add money")
     void addMoney() {
         manager = mock(ManagerCells.class);
-        atm = new ATM(manager);
+        atm = new ATM(manager, "test");
         atm.addMoney(Money.TEN);
         atm.addMoney(Money.FIVE);
         atm.addMoney(Money.ONE_HUNDRED);

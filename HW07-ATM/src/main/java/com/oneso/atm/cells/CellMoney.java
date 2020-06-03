@@ -1,6 +1,6 @@
-package com.oneso.cells;
+package com.oneso.atm.cells;
 
-import com.oneso.money.Money;
+import com.oneso.atm.money.Money;
 
 public class CellMoney implements Cell {
 
@@ -19,6 +19,11 @@ public class CellMoney implements Cell {
   @Override
   public void putMoney() {
     count++;
+  }
+
+  @Override
+  public void putMoney(int count) {
+    this.count += count;
   }
 
   @Override
