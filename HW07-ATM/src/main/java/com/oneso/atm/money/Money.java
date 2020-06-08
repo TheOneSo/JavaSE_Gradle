@@ -1,4 +1,4 @@
-package com.oneso.money;
+package com.oneso.atm.money;
 
 public enum Money {
 

@@ -1,6 +1,6 @@
-package com.oneso.cells;
+package com.oneso.atm.cells;
 
-import com.oneso.money.Money;
+import com.oneso.atm.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

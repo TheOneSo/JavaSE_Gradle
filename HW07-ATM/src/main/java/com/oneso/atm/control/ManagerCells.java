@@ -1,15 +1,21 @@
-package com.oneso.control;
+package com.oneso.atm.control;
 
-import com.oneso.cells.Cell;
-import com.oneso.cells.CellMoney;
-import com.oneso.money.Money;
+import com.oneso.atm.cells.Cell;
+import com.oneso.atm.cells.CellMoney;
+import com.oneso.atm.money.Money;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 public class ManagerCells implements Manager {
 
-  private final List<Cell> cells = new ArrayList<>();
+  private List<Cell> cells = new ArrayList<>();
+
+  public ManagerCells() {}
+
+  public ManagerCells(List<Cell> cells) {
+    this.cells = cells;
+  }
 
   @Override
   public void updateCell(Money money, Consumer<Cell> func) {
@@ -32,6 +38,19 @@ public class ManagerCells implements Manager {
   @Override
   public List<Cell> getCells() {
     return Collections.unmodifiableList(cells);
+  }
+
+  @Override
+  public Manager copy() {
+    List<Cell> copy = new ArrayList<>();
+    for(var temp : cells) {
+      Cell cell = new CellMoney(temp.getType());
+      cell.putMoney(temp.getCount());
+      copy.add(cell);
+    }
+    copy.sort((a, b) -> b.getType().getValue() - a.getType().getValue());
+
+    return new ManagerCells(copy);
   }
 
   private Cell createCell(Money money) {
