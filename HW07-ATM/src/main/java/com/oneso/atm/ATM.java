@@ -34,8 +34,8 @@ public class ATM {
     log.debug("ATM[{}] Put ${}", name, money.getValue());
   }
 
-  public void getBalance() {
-    log.debug("ATM[{}] Count: {}", name,
+  public void getBalance(String info) {
+    log.debug("ATM[{}] Info: {} Count: {}", name, info,
         manager.getCells().stream().map(Cell::getMoney).reduce(0, Integer::sum));
   }
 

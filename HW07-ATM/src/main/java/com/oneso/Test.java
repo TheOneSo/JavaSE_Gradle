@@ -58,14 +58,14 @@ public class Test {
     atm1.getMoney(100);
     atm2.getMoney(500);
     atm3.getMoney(1000);
-    atm1.getBalance();
-    atm2.getBalance();
-    atm3.getBalance();
+    atm1.getBalance("atm1");
+    atm2.getBalance("atm2");
+    atm3.getBalance("atm3");
 
     atm2 = atm2.getState().restoreState();
-    atm1.getBalance();
-    atm2.getBalance();
-    atm3.getBalance();
+    atm1.getBalance("atm1");
+    atm2.getBalance("atm2");
+    atm3.getBalance("atm3");
 
     ATM test = new ATM(new ManagerCells(), "TEST");
     AtmExecutor testExecutor = new AtmExecutor();
@@ -73,14 +73,14 @@ public class Test {
     testExecutor.addExecutor(new AtmStartState(Money.FIVE, 10).getAtmCommand());
     testExecutor.addExecutor(new AtmStartState(Money.TEN, 5).getAtmCommand());
     testExecutor.execute();
-    test.getBalance();
+    test.getBalance("test");
 
     State stateTest = new State();
     stateTest.saveState(test.getClone());
     test.getMoney(50);
-    test.getBalance();
+    test.getBalance("test");
 
     test = stateTest.restoreState();
-    test.getBalance();
+    test.getBalance("test");
   }
 }

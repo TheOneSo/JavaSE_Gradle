@@ -4,5 +4,5 @@ import com.oneso.atm.ATM;
 
 @FunctionalInterface
 public interface AtmCommand {
-  void doStartState(ATM atm);
+  void doCommand(ATM atm);
 }

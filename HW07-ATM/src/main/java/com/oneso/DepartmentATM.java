@@ -29,17 +29,17 @@ public class DepartmentATM {
   }
 
   public void init() {
-    atmList.forEach(atm -> {
+    for(ATM temp : atmList) {
       startState();
-      eventProducer.addAtmListener(atm.getAtmListener());
-      atmExecutor.run(atm);
-    });
+      eventProducer.addAtmListener(temp.getAtmListener());
+      atmExecutor.run(temp);
+    }
   }
 
   public void getBalance() {
     eventProducer.removeAll();
     atmList.forEach(atm -> eventProducer.addAtmListener(atm.getAtmListener()));
-    eventProducer.event();
+    eventProducer.event("Balance");
   }
 
   public void restoreState() {

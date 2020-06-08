@@ -1,14 +1,14 @@
 package com.oneso.command;
 
 import com.oneso.atm.ATM;
-import com.oneso.chain.Chain;
+import com.oneso.chain.AtmInChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AtmExecutor extends Chain {
+public class AtmExecutor extends AtmInChain {
 
   private static final Logger log = LogManager.getLogger(AtmExecutor.class);
 
@@ -24,7 +24,7 @@ public class AtmExecutor extends Chain {
   }
 
   public void execute() {
-    atmCommands.forEach(c -> c.doStartState(atm));
+    atmCommands.forEach(c -> c.doCommand(atm));
   }
 
   public void clearCommands() {

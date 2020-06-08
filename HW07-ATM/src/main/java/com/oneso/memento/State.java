@@ -1,14 +1,14 @@
 package com.oneso.memento;
 
 import com.oneso.atm.ATM;
-import com.oneso.chain.Chain;
+import com.oneso.chain.AtmInChain;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class State extends Chain {
+public class State extends AtmInChain {
 
   private static final Logger log = LogManager.getLogger(State.class);
 

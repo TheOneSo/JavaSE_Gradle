@@ -3,4 +3,4 @@ Developer Java
 
 Name: Rassadin Sergey
 
-Email: com.com.oneso.null@icloud.com
+Email: oneso.null@icloud.com

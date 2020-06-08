@@ -2,15 +2,15 @@ package com.oneso.chain;
 
 import com.oneso.atm.ATM;
 
-public abstract class Chain {
+public abstract class AtmInChain {
 
-  private Chain next;
+  private AtmInChain next;
 
-  public void setNext(Chain next) {
+  public void setNext(AtmInChain next) {
     this.next = next;
   }
 
-  public Chain getNext() {
+  public AtmInChain getNext() {
     return next;
   }
 
