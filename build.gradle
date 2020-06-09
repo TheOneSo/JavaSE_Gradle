@@ -20,7 +20,7 @@ group 'com.oneso'
 version = '1.0-SNAPSHOT'
 
 allprojects {
-  group "com.com.com.oneso"
+  group "com.oneso"
 
   repositories {
     mavenCentral()
