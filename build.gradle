@@ -16,7 +16,7 @@ idea {
   }
 }
 
-group 'com.com.com.oneso'
+group 'com.oneso'
 version = '1.0-SNAPSHOT'
 
 allprojects {
