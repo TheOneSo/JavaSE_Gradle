@@ -11,19 +11,28 @@ public class MyGson {
   private static final List<Class<?>> number = Arrays.asList(Byte.class, Short.class, Integer.class, Long.class);
   private static final List<Class<?>> numberWithPoint = Arrays.asList(Float.class, Double.class);
 
-  public String toJson(Object obj) throws IllegalAccessException {
-    if(obj == null) {
+  public String toJson(Object obj) {
+    if (obj == null) {
       return null;
     }
-    JsonObject jsonObject = init(obj);
 
-    return jsonObject.toString();
+    try {
+      return init(obj);
+    } catch (IllegalAccessException ex) {
+      throw new ExceptionInInitializerError("Json hasn't made out");
+    }
   }
 
-  private JsonObject init(Object obj) throws IllegalAccessException {
+  private String init(Object obj) throws IllegalAccessException {
     Class<?> clazz = obj.getClass();
     Field[] fields = clazz.getDeclaredFields();
     JsonObjectBuilder builder = Json.createObjectBuilder();
+
+    String checkValue = checkObj(obj, clazz);
+    if(!checkValue.isEmpty()) {
+      return checkValue;
+    }
+
 
     for (Field field : fields) {
       field.setAccessible(true);
@@ -31,110 +40,76 @@ public class MyGson {
       var type = field.getType();
 
       if (field.get(obj) != null) {
-        if (type.isPrimitive()) {
-          addPrimitive(field.get(obj), name, type, builder);
-        } else if (type.isArray()) {
-          addArrayPrimitive(field.get(obj), name, type, builder);
-        } else if (Arrays.asList(type.getInterfaces()).contains(Collection.class)) {
-          addCollections((List<Object>) field.get(obj), name, type, builder);
-        } else if (number.contains(type)) {
-          builder.add(name, Long.parseLong(field.get(obj).toString()));
-        } else if (numberWithPoint.contains(type)) {
-          builder.add(name, Double.parseDouble(field.get(obj).toString()));
-        } else if (String.class.equals(type)) {
-          builder.add(name, field.get(obj).toString());
-        } else if (Boolean.class.equals(type)) {
-          builder.add(name, (boolean) field.get(obj));
+        if (type.isArray()) {
+          builder.add(name, addArrayPrimitive(field.get(obj)));
+        } else if (Collection.class.isAssignableFrom(type)) {
+          builder.add(name, addCollections((Collection<Object>) field.get(obj)));
+        } else {
+          builder.add(name, toJsonValue(field.get(obj), type));
         }
       }
     }
-    return builder.build();
+    return builder.build().toString();
   }
 
-  private void addPrimitive(Object value, String name, Class<?> type, JsonObjectBuilder builder) {
-    switch (type.getSimpleName().toLowerCase()) {
-      case "byte":
-        builder.add(name, (byte) value);
-        break;
-      case "short":
-        builder.add(name, (short) value);
-        break;
-      case "int":
-        builder.add(name, (int) value);
-        break;
-      case "long":
-        builder.add(name, (long) value);
-        break;
-      case "float":
-        builder.add(name, (float) value);
-        break;
-      case "double":
-        builder.add(name, (double) value);
-        break;
-      case "char":
-        builder.add(name, (char) value);
-        break;
-      case "boolean":
-        builder.add(name, (boolean) value);
-        break;
-      default:
-        throw new NoSuchElementException();
+  private JsonValue toJsonValue(Object obj, Class<?> type) {
+    if(type.isPrimitive()) {
+      if (byte.class.equals(type)) {
+        return Json.createValue((byte) obj);
+      } else if (short.class.equals(type)) {
+        return Json.createValue((short) obj);
+      } else if (int.class.equals(type)) {
+        return Json.createValue((int) obj);
+      } else if (long.class.equals(type)) {
+        return Json.createValue((long) obj);
+      } else if (float.class.equals(type)) {
+        return Json.createValue((float) obj);
+      } else if (double.class.equals(type)) {
+        return Json.createValue((double) obj);
+      } else if (char.class.equals(type)) {
+        return Json.createValue((char) obj);
+      } else if (boolean.class.equals(type)) {
+        return (boolean) obj ? JsonValue.TRUE : JsonValue.FALSE;
+      } else {
+        return JsonValue.NULL;
+      }
+    } else if(number.contains(type)) {
+      return Json.createValue(Long.parseLong(obj.toString()));
+    } else if(numberWithPoint.contains(type)) {
+      return Json.createValue(Double.parseDouble(obj.toString()));
+    } else if(String.class.equals(type) || Character.class.equals(type)) {
+      return Json.createValue(obj.toString());
+    }
+    return JsonValue.NULL;
+  }
+
+  private String checkObj(Object obj, Class<?> clazz) {
+    if(clazz.isArray()) {
+      return addArrayPrimitive(obj).build().toString();
+    } else if(Collection.class.isAssignableFrom(clazz)) {
+      return addCollections((Collection<Object>) obj).build().toString();
+    } else {
+      JsonValue value = toJsonValue(obj, clazz);
+      return value != JsonValue.NULL ? value.toString() : "";
     }
   }
 
-  private void addArrayPrimitive(Object value, String name, Class<?> type, JsonObjectBuilder builder) {
+  private JsonArrayBuilder addArrayPrimitive(Object value) {
     Object[] array = new Object[Array.getLength(value)];
     for (int i = 0; i < array.length; i++)
       array[i] = Array.get(value, i);
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
     for (Object temp : array) {
-      switch (type.getSimpleName().toLowerCase().replace("[]", "")) {
-        case "byte":
-          arrayBuilder.add((byte) temp);
-          break;
-        case "short":
-          arrayBuilder.add((short) temp);
-          break;
-        case "int":
-          arrayBuilder.add((int) temp);
-          break;
-        case "long":
-          arrayBuilder.add((long) temp);
-          break;
-        case "float":
-          arrayBuilder.add((float) temp);
-          break;
-        case "double":
-          arrayBuilder.add((double) temp);
-          break;
-        case "char":
-          arrayBuilder.add((char) temp);
-          break;
-        case "boolean":
-          arrayBuilder.add((boolean) temp);
-          break;
-        default:
-          throw new NoSuchElementException();
-      }
+      arrayBuilder.add(toJsonValue(temp, temp.getClass()));
     }
-    builder.add(name, arrayBuilder);
+    return arrayBuilder;
   }
 
-  private void addCollections(List<Object> value, String name, Class<?> type, JsonObjectBuilder builder) {
+  private JsonArrayBuilder addCollections(Collection<Object> value) {
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-    if (number.contains(type)) {
-      for (Object temp : value) {
-        arrayBuilder.add(Long.parseLong(temp.toString()));
-      }
-    } else if (numberWithPoint.contains(type)) {
-      for (Object temp : value) {
-        arrayBuilder.add(Double.parseDouble(temp.toString()));
-      }
-    } else {
-      for (Object temp : value) {
-        arrayBuilder.add(temp.toString());
-      }
+    for(Object temp : value) {
+      arrayBuilder.add(toJsonValue(temp, temp.getClass()));
     }
-    builder.add(name, arrayBuilder);
+    return arrayBuilder;
   }
 }

@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 public class MainMyGson {
 
-  public static void main(String[] args) throws IllegalAccessException {
+  public static void main(String[] args) {
     MyGson myGson = new MyGson();
     AnyObject anyObject = new AnyObject();
     String myJson = myGson.toJson(anyObject);
