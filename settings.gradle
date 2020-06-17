@@ -10,4 +10,6 @@
 rootProject.name = 'javahw'
 include 'HW07-ATM'
 findProject(':HW07-ATM')?.name = 'hw07-atm'
+include 'HW09-JDBC'
+findProject(':HW09-JDBC')?.name = 'hw09-jdbc'
 
