@@ -16,44 +16,37 @@ public class MyGson {
       return null;
     }
 
-    try {
-      return init(obj);
-    } catch (IllegalAccessException ex) {
-      throw new ExceptionInInitializerError("Json hasn't made out");
+    JsonValue value = toJsonValue(obj, obj.getClass(), true);
+    if(!value.equals(JsonValue.NULL)) {
+      return value.toString();
     }
+
+    return init(obj).toString();
   }
 
-  private String init(Object obj) throws IllegalAccessException {
+  private JsonObject init(Object obj) {
     Class<?> clazz = obj.getClass();
     Field[] fields = clazz.getDeclaredFields();
     JsonObjectBuilder builder = Json.createObjectBuilder();
-
-    String checkValue = checkObj(obj, clazz);
-    if(!checkValue.isEmpty()) {
-      return checkValue;
-    }
-
 
     for (Field field : fields) {
       field.setAccessible(true);
       var name = field.getName();
       var type = field.getType();
 
-      if (field.get(obj) != null) {
-        if (type.isArray()) {
-          builder.add(name, addArrayPrimitive(field.get(obj)));
-        } else if (Collection.class.isAssignableFrom(type)) {
-          builder.add(name, addCollections((Collection<Object>) field.get(obj)));
-        } else {
-          builder.add(name, toJsonValue(field.get(obj), type));
+      try {
+        if (field.get(obj) != null) {
+          builder.add(name, toJsonValue(field.get(obj), type, false));
         }
+      } catch (IllegalAccessException e) {
+        throw new ExceptionInInitializerError("Couldn't get field");
       }
     }
-    return builder.build().toString();
+    return builder.build();
   }
 
-  private JsonValue toJsonValue(Object obj, Class<?> type) {
-    if(type.isPrimitive()) {
+  private JsonValue toJsonValue(Object obj, Class<?> type, boolean firstObj) {
+    if (type.isPrimitive()) {
       if (byte.class.equals(type)) {
         return Json.createValue((byte) obj);
       } else if (short.class.equals(type)) {
@@ -70,28 +63,21 @@ public class MyGson {
         return Json.createValue((char) obj);
       } else if (boolean.class.equals(type)) {
         return (boolean) obj ? JsonValue.TRUE : JsonValue.FALSE;
-      } else {
-        return JsonValue.NULL;
       }
-    } else if(number.contains(type)) {
+    } else if (number.contains(type)) {
       return Json.createValue(Long.parseLong(obj.toString()));
-    } else if(numberWithPoint.contains(type)) {
+    } else if (numberWithPoint.contains(type)) {
       return Json.createValue(Double.parseDouble(obj.toString()));
-    } else if(String.class.equals(type) || Character.class.equals(type)) {
+    } else if (String.class.equals(type) || Character.class.equals(type)) {
       return Json.createValue(obj.toString());
+    } else if (Collection.class.isAssignableFrom(type)) {
+      return addCollections((Collection<Object>) obj).build();
+    } else if (type.isArray()) {
+      return addArrayPrimitive(obj).build();
+    } else if (!firstObj) {
+      return Json.createObjectBuilder(init(obj)).build();
     }
     return JsonValue.NULL;
-  }
-
-  private String checkObj(Object obj, Class<?> clazz) {
-    if(clazz.isArray()) {
-      return addArrayPrimitive(obj).build().toString();
-    } else if(Collection.class.isAssignableFrom(clazz)) {
-      return addCollections((Collection<Object>) obj).build().toString();
-    } else {
-      JsonValue value = toJsonValue(obj, clazz);
-      return value != JsonValue.NULL ? value.toString() : "";
-    }
   }
 
   private JsonArrayBuilder addArrayPrimitive(Object value) {
@@ -100,15 +86,15 @@ public class MyGson {
       array[i] = Array.get(value, i);
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
     for (Object temp : array) {
-      arrayBuilder.add(toJsonValue(temp, temp.getClass()));
+      arrayBuilder.add(toJsonValue(temp, temp.getClass(), false));
     }
     return arrayBuilder;
   }
 
   private JsonArrayBuilder addCollections(Collection<Object> value) {
     JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-    for(Object temp : value) {
-      arrayBuilder.add(toJsonValue(temp, temp.getClass()));
+    for (Object temp : value) {
+      arrayBuilder.add(toJsonValue(temp, temp.getClass(), false));
     }
     return arrayBuilder;
   }

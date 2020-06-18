@@ -19,7 +19,8 @@ public class MyGsonTest {
   private static final MyGson myGson = new MyGson();
 
   private static Stream<Object> generateData() {
-    return Stream.of((byte) 1, (short) 2f, 3, 4L, 5f, 6d, "aaa", 'b', new int[]{7, 8, 9}, List.of(10, 11, 12), Collections.singletonList(13));
+    return Stream.of((byte) 1, (short) 2f, 3, 4L, 5f, 6d, "aaa", 'b',
+        new int[]{7, 8, 9}, List.of(10, 11, 12), Collections.singletonList(13), new AnyObject2());
   }
 
   @DisplayName("should be same")
@@ -28,4 +29,10 @@ public class MyGsonTest {
   void toJson(Object arg) {
     assertEquals(gson.toJson(arg), myGson.toJson(arg));
   }
+
+}
+
+class AnyObject2 {
+  private AnyObject anyObject = new AnyObject();
+  private List<AnyObject> anyObjectList = List.of(new AnyObject());
 }
