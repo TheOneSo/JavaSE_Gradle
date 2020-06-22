@@ -10,4 +10,6 @@
 rootProject.name = 'javahw'
 include 'HW07-ATM'
 findProject(':HW07-ATM')?.name = 'hw07-atm'
+include 'HW08-Gson'
+findProject(':HW08-Gson')?.name = 'hw08-gson'
 
