@@ -32,7 +32,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
   }
 
   @Override
-  public void insert(T objectData) {
+  public long insert(T objectData) {
     String sql = entitySQLMetaData.getInsertSql();
     List<Object> params = new ArrayList<>();
 
@@ -41,8 +41,7 @@ public class JdbcMapperImpl<T> implements JdbcMapper<T> {
         params.add(field.get(objectData));
       }
 
-      dbExecutor.executeInsert(getConnection(), sql, params);
-      logger.info("Insert was executed");
+      return dbExecutor.executeInsert(getConnection(), sql, params);
     } catch (SQLException | IllegalAccessException e) {
       logger.error("Method insert has had a problem");
       throw new MapperException("Method insert has had a problem", e);

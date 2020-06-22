@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import javax.sql.DataSource;
 
+import com.oneso.jdbc.dao.UserDaoJdbc;
 import com.oneso.core.service.DbServiceUserImpl;
 import com.oneso.jdbc.*;
 import com.oneso.jdbc.sessionmanager.SessionManagerJdbc;
@@ -31,7 +32,8 @@ public class DbServiceDemo {
     var entitySQLMetaData = new EntitySQLMetaDataImpl<>(entityClassMetaData);
     var jdbcMapper = new JdbcMapperImpl<>(sessionManager, dbExecutor, entityClassMetaData, entitySQLMetaData);
 
-    var dbServiceUser = new DbServiceUserImpl(jdbcMapper);
+    var userDao = new UserDaoJdbc(jdbcMapper, sessionManager);
+    var dbServiceUser = new DbServiceUserImpl(userDao);
     var id = dbServiceUser.saveUser(new User(0, "Igor", 20));
     Optional<User> user = dbServiceUser.getUser(id);
 

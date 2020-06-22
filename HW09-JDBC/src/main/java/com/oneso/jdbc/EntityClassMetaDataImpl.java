@@ -25,7 +25,8 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
   public EntityClassMetaDataImpl(Class<T> clazz) {
     this.clazz = clazz;
 
-    if(getIdField() == null) {
+    initFieldWithId();
+    if(fieldWithId == null) {
       logger.error("This object {} doesn't have annotation Id", clazz.getSimpleName());
       throw new ExceptionInInitializerError("This object doesn't have annotation Id");
     }
@@ -42,23 +43,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
       return constructor;
     }
 
-    if(fieldAll == null) {
-      getAllFields();
-    }
-
-    Class<?>[] params = new Class<?>[fieldAll.size()];
-    for(int i = 0; i < params.length; i++) {
-      params[i] = fieldAll.get(i).getType();
-    }
-
-    try {
-      constructor = clazz.getConstructor(params);
-      logger.info("Constructor was created");
-    } catch (NoSuchMethodException e) {
-      logger.error("Cannot create constructor");
-      throw new ExceptionInInitializerError("Cannot create constructor");
-    }
-
+    initConstructor();
     return constructor;
   }
 
@@ -68,13 +53,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
       return fieldWithId;
     }
 
-    Field[] fields = clazz.getDeclaredFields();
-    for(Field field : fields) {
-      if(field.isAnnotationPresent(Id.class)) {
-        fieldWithId = field;
-      }
-    }
-    logger.info("Field with id was initialized");
+    initFieldWithId();
     return fieldWithId;
   }
 
@@ -84,9 +63,7 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
       return fieldAll;
     }
 
-    fieldAll = List.of(clazz.getDeclaredFields());
-
-    logger.info("Field all was initialized");
+    initFields();
     return fieldAll;
   }
 
@@ -96,11 +73,56 @@ public class EntityClassMetaDataImpl<T> implements EntityClassMetaData<T> {
       return fieldsWithoutId;
     }
 
+    initFieldsWithoutId();
+    return fieldsWithoutId;
+  }
+
+  private void initConstructor() {
+    Class<?>[] params = getParamsForConstructor();
+
+    try {
+      constructor = clazz.getConstructor(params);
+      logger.info("Constructor was created");
+    } catch (NoSuchMethodException e) {
+      logger.error("Cannot create constructor");
+      throw new ExceptionInInitializerError("Cannot create constructor");
+    }
+  }
+
+  private Class<?>[] getParamsForConstructor() {
+    if(fieldAll == null) {
+      initFields();
+    }
+
+    Class<?>[] params = new Class<?>[fieldAll.size()];
+    for(int i = 0; i < params.length; i++) {
+      params[i] = fieldAll.get(i).getType();
+    }
+
+    return params;
+  }
+
+  private void initFieldWithId() {
+    Field[] fields = clazz.getDeclaredFields();
+    for(Field field : fields) {
+      if(field.isAnnotationPresent(Id.class)) {
+        fieldWithId = field;
+      }
+    }
+    logger.info("Field with id was initialized");
+  }
+
+  private void initFields() {
+    fieldAll = List.of(clazz.getDeclaredFields());
+
+    logger.info("Field all was initialized");
+  }
+
+  private void initFieldsWithoutId() {
     fieldsWithoutId = Arrays.stream(clazz.getDeclaredFields())
         .filter(field -> !field.isAnnotationPresent(Id.class))
         .collect(Collectors.toList());
 
     logger.info("Field without id was initialized");
-    return fieldsWithoutId;
   }
 }

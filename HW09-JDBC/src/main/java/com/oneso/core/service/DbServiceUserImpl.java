@@ -1,6 +1,6 @@
 package com.oneso.core.service;
 
-import com.oneso.jdbc.JdbcMapperImpl;
+import com.oneso.core.dao.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.oneso.core.model.User;
@@ -10,18 +10,18 @@ import java.util.Optional;
 public class DbServiceUserImpl implements DBServiceUser {
   private static final Logger logger = LoggerFactory.getLogger(DbServiceUserImpl.class);
 
-  private final JdbcMapperImpl<User> jdbcMapper;
+  private final UserDao userDao;
 
-  public DbServiceUserImpl(JdbcMapperImpl<User> jdbcMapper) {
-    this.jdbcMapper = jdbcMapper;
+  public DbServiceUserImpl(UserDao userDao) {
+    this.userDao = userDao;
   }
 
   @Override
   public long saveUser(User user) {
-    try (var sessionManager = jdbcMapper.getSessionManager()) {
+    try (var sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
       try {
-        jdbcMapper.insert(user);
+        userDao.insertUser(user);
         sessionManager.commitSession();
 
         logger.info("created user: {}", user.id);
@@ -36,10 +36,10 @@ public class DbServiceUserImpl implements DBServiceUser {
 
   @Override
   public Optional<User> getUser(long id) {
-    try (var sessionManager = jdbcMapper.getSessionManager()) {
+    try (var sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
       try {
-        Optional<User> userOptional = Optional.of(jdbcMapper.findById(id, User.class));
+        Optional<User> userOptional = userDao.findById(id);
 
         logger.info("user: {}", userOptional.orElse(null));
         return userOptional;
