@@ -1,18 +1,18 @@
 package com.oneso.core.dao;
 
-import com.oneso.core.model.User;
+import com.oneso.core.model.UserJdbc;
 import com.oneso.core.sessionmanager.SessionManager;
 
 import java.util.Optional;
 
 public interface UserDao {
-  Optional<User> findById(long id);
+  Optional<UserJdbc> findById(long id);
 
-  long insertUser(User user);
+  long insertUser(UserJdbc userJdbc);
 
-  void updateUser(User user);
+  void updateUser(UserJdbc userJdbc);
 
-  void insertOrUpdate(User user);
+  void insertOrUpdate(UserJdbc userJdbc);
 
   SessionManager getSessionManager();
 }
