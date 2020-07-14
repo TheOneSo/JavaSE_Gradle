@@ -1,12 +1,12 @@
 package com.oneso.core.service;
 
-import com.oneso.core.model.UserJdbc;
+import com.oneso.core.model.User;
 
 import java.util.Optional;
 
 public interface DBServiceUser {
 
-  long saveUser(UserJdbc userJdbc);
+  long saveUser(User user);
 
-  Optional<UserJdbc> getUser(long id);
+  Optional<User> getUser(long id);
 }

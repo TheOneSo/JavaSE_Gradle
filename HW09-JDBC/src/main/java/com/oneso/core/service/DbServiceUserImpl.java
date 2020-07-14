@@ -3,7 +3,7 @@ package com.oneso.core.service;
 import com.oneso.core.dao.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.oneso.core.model.UserJdbc;
+import com.oneso.core.model.User;
 
 import java.util.Optional;
 
@@ -17,15 +17,15 @@ public class DbServiceUserImpl implements DBServiceUser {
   }
 
   @Override
-  public long saveUser(UserJdbc userJdbc) {
+  public long saveUser(User user) {
     try (var sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
       try {
-        userDao.insertUser(userJdbc);
+        userDao.insertUser(user);
         sessionManager.commitSession();
 
-        logger.info("created user: {}", userJdbc.id);
-        return userJdbc.id;
+        logger.info("created user: {}", user.id);
+        return user.id;
       } catch (Exception e) {
         logger.error(e.getMessage(), e);
         sessionManager.rollbackSession();
@@ -35,11 +35,11 @@ public class DbServiceUserImpl implements DBServiceUser {
   }
 
   @Override
-  public Optional<UserJdbc> getUser(long id) {
+  public Optional<User> getUser(long id) {
     try (var sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
       try {
-        Optional<UserJdbc> userOptional = userDao.findById(id);
+        Optional<User> userOptional = userDao.findById(id);
 
         logger.info("user: {}", userOptional.orElse(null));
         return userOptional;

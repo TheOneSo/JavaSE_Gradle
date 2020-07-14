@@ -2,7 +2,7 @@ package com.oneso.core.model;
 
 import com.oneso.jdbc.mapper.Id;
 
-public class UserJdbc {
+public class User {
 
   @Id
   public long id;
@@ -11,13 +11,13 @@ public class UserJdbc {
 
   public int age;
 
-  public UserJdbc(long id, String name, int age) {
+  public User(long id, String name, int age) {
     this.id = id;
     this.name = name;
     this.age = age;
   }
 
-  public UserJdbc(){}
+  public User(){}
 
   public int getAge() {
     return age;

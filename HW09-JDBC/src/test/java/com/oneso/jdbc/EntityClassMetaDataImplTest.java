@@ -1,6 +1,6 @@
 package com.oneso.jdbc;
 
-import com.oneso.core.model.UserJdbc;
+import com.oneso.core.model.User;
 import com.oneso.jdbc.mapper.EntityClassMetaData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -14,17 +14,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("Entity Class MetaData should do")
 class EntityClassMetaDataImplTest {
 
-  private EntityClassMetaData<UserJdbc> entityClassMetaData;
+  private EntityClassMetaData<User> entityClassMetaData;
 
   @BeforeEach
   void setUp() {
-    entityClassMetaData = new EntityClassMetaDataImpl<>(UserJdbc.class);
+    entityClassMetaData = new EntityClassMetaDataImpl<>(User.class);
   }
 
   @Test
   @DisplayName("should return name of class")
   void getName() {
-    assertEquals(UserJdbc.class.getSimpleName(), entityClassMetaData.getName());
+    assertEquals(User.class.getSimpleName(), entityClassMetaData.getName());
   }
 
   @Test

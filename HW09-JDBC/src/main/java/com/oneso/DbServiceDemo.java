@@ -11,7 +11,7 @@ import com.oneso.jdbc.sessionmanager.SessionManagerJdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.oneso.h2.DataSourceH2;
-import com.oneso.core.model.UserJdbc;
+import com.oneso.core.model.User;
 
 /**
  * @author sergey
@@ -27,23 +27,23 @@ public class DbServiceDemo {
     demo.createTableUser(dataSource);
 
     var sessionManager = new SessionManagerJdbc(dataSource);
-    DbExecutor<UserJdbc> dbExecutor = new DbExecutorImpl<>();
-    var entityClassMetaData = new EntityClassMetaDataImpl<>(UserJdbc.class);
+    DbExecutor<User> dbExecutor = new DbExecutorImpl<>();
+    var entityClassMetaData = new EntityClassMetaDataImpl<>(User.class);
     var entitySQLMetaData = new EntitySQLMetaDataImpl<>(entityClassMetaData);
     var jdbcMapper = new JdbcMapperImpl<>(sessionManager, dbExecutor, entityClassMetaData, entitySQLMetaData);
 
     var userDao = new UserDaoJdbc(jdbcMapper, sessionManager);
     var dbServiceUser = new DbServiceUserImpl(userDao);
-    var id = dbServiceUser.saveUser(new UserJdbc(0, "Igor", 20));
-    Optional<UserJdbc> user = dbServiceUser.getUser(id);
+    var id = dbServiceUser.saveUser(new User(0, "Igor", 20));
+    Optional<User> user = dbServiceUser.getUser(id);
 
     user.ifPresentOrElse(
         crUser -> logger.info("created user, name: {}", crUser.getName()),
         () -> logger.info("user was not created")
     );
 
-    var id2 = dbServiceUser.saveUser(new UserJdbc(1, "John", 25));
-    Optional<UserJdbc> user2 = dbServiceUser.getUser(id2);
+    var id2 = dbServiceUser.saveUser(new User(1, "John", 25));
+    Optional<User> user2 = dbServiceUser.getUser(id2);
 
     user2.ifPresentOrElse(
         crUser -> logger.info("created user, name: {}", crUser.getName()),

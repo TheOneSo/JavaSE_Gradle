@@ -1,6 +1,6 @@
 package com.oneso.jdbc;
 
-import com.oneso.core.model.UserJdbc;
+import com.oneso.core.model.User;
 import com.oneso.jdbc.mapper.EntityClassMetaData;
 import com.oneso.jdbc.mapper.EntitySQLMetaData;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 @DisplayName("Entity SQL MetaData should do")
 class EntitySQLMetaDataImplTest {
 
-  private EntityClassMetaData<UserJdbc> entityClassMetaData;
+  private EntityClassMetaData<User> entityClassMetaData;
   private EntitySQLMetaData entitySQLMetaData;
 
   @BeforeEach
@@ -38,7 +38,7 @@ class EntitySQLMetaDataImplTest {
   void getSelectByIdSql() {
     String sql = "select id, name, age from test where id = ?";
     when(entityClassMetaData.getName()).thenReturn("test");
-    when(entityClassMetaData.getFieldsWithoutId()).thenReturn(List.of(UserJdbc.class.getFields()));
+    when(entityClassMetaData.getFieldsWithoutId()).thenReturn(List.of(User.class.getFields()));
 
     assertEquals(sql, entitySQLMetaData.getSelectByIdSql());
   }
@@ -48,7 +48,7 @@ class EntitySQLMetaDataImplTest {
   void getInsertSql() {
     String sql = "insert into test(id, name, age) values (?, ?, ?)";
     when(entityClassMetaData.getName()).thenReturn("test");
-    when(entityClassMetaData.getAllFields()).thenReturn(List.of(UserJdbc.class.getFields()));
+    when(entityClassMetaData.getAllFields()).thenReturn(List.of(User.class.getFields()));
 
     assertEquals(sql, entitySQLMetaData.getInsertSql());
   }
@@ -58,8 +58,8 @@ class EntitySQLMetaDataImplTest {
   void getUpdateSql() {
     String sql = "update test set id = ? set name = ? set age = ? where id = ?";
     when(entityClassMetaData.getName()).thenReturn("test");
-    when(entityClassMetaData.getFieldsWithoutId()).thenReturn(List.of(UserJdbc.class.getFields()));
-    when(entityClassMetaData.getIdField()).thenReturn(UserJdbc.class.getFields()[0]);
+    when(entityClassMetaData.getFieldsWithoutId()).thenReturn(List.of(User.class.getFields()));
+    when(entityClassMetaData.getIdField()).thenReturn(User.class.getFields()[0]);
 
     assertEquals(sql, entitySQLMetaData.getUpdateSql());
   }
