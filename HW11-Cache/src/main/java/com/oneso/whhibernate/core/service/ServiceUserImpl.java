@@ -1,5 +1,7 @@
 package com.oneso.whhibernate.core.service;
 
+import com.oneso.cache.HwListener;
+import com.oneso.cache.MyCache;
 import com.oneso.whhibernate.core.dao.UserDao;
 import com.oneso.whhibernate.core.model.User;
 import com.oneso.whhibernate.core.sessionmanager.SessionManager;
@@ -12,10 +14,25 @@ public class ServiceUserImpl implements ServiceUser {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceUserImpl.class);
 
-  private final UserDao userDao;
+  private MyCache<Long, User> cache;
+  HwListener<Long, User> listener = new HwListener<Long, User>() {
+    @Override
+    public void notify(Long key, User value, String action) {
+      logger.info("User id: {}, Info: {}, action: {}", key, value, action);
+    }
+  };
 
-  public ServiceUserImpl(UserDao userDao) {
+  private final UserDao userDao;
+  private final boolean useCache;
+
+  public ServiceUserImpl(UserDao userDao, boolean useCache) {
     this.userDao = userDao;
+    this.useCache = useCache;
+
+    if(useCache) {
+      cache = new MyCache<>();
+      cache.addListener(listener);
+    }
   }
 
   @Override
@@ -26,6 +43,11 @@ public class ServiceUserImpl implements ServiceUser {
       try {
         userDao.insertOrUpdate(user);
         long id = user.getId();
+
+        if(useCache) {
+          cache.put(id, user);
+        }
+
         sessionManager.commitSession();
         logger.info("Create user: {}", id);
         return id;
@@ -39,6 +61,13 @@ public class ServiceUserImpl implements ServiceUser {
 
   @Override
   public Optional<User> getUser(long id) {
+    if(useCache) {
+      User user = cache.get(id);
+      if(user != null) {
+        return Optional.of(user);
+      }
+    }
+
     try(SessionManager sessionManager = userDao.getSessionManager()) {
       sessionManager.beginSession();
 
@@ -52,5 +81,9 @@ public class ServiceUserImpl implements ServiceUser {
         throw new ServiceException(e);
       }
     }
+  }
+
+  public void clearListener() {
+    cache.removeListener(listener);
   }
 }

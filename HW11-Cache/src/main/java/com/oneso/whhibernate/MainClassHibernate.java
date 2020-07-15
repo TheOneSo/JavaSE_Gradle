@@ -1,5 +1,7 @@
 package com.oneso.whhibernate;
 
+import com.oneso.cache.HwListener;
+import com.oneso.cache.MyCache;
 import com.oneso.whhibernate.core.dao.UserDao;
 import com.oneso.whhibernate.core.model.Address;
 import com.oneso.whhibernate.core.model.Phone;
@@ -27,7 +29,7 @@ public class MainClassHibernate {
 
     SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
     UserDao userDao = new UserDaoHibernate(sessionManager);
-    ServiceUser dbServiceUser = new ServiceUserImpl(userDao);
+    ServiceUserImpl dbServiceUser = new ServiceUserImpl(userDao, true);
 
     User user = new User();
     Address address = new Address(0, "street #123", user);
@@ -41,6 +43,7 @@ public class MainClassHibernate {
 
     id = dbServiceUser.saveUser(new User(1L, "А! Нет. Это же совсем не Вася", address, List.of(phone)));
     Optional<User> mayBeUpdatedUser = dbServiceUser.getUser(id);
+    dbServiceUser.clearListener();
 
     outputUserOptional("Created user", mayBeCreatedUser);
     outputUserOptional("Updated user", mayBeUpdatedUser);
