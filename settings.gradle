@@ -16,4 +16,6 @@ include 'HW09-JDBC'
 findProject(':HW09-JDBC')?.name = 'hw09-jdbc'
 include 'HW10-Hibernate'
 findProject(':HW10-Hibernate')?.name = 'hw10-hibernate'
+include 'HW11-Cache'
+findProject(':HW11-Cache')?.name = 'hw11-cache'
 
