@@ -21,12 +21,7 @@ public class MyCache<K, V> implements HwCache<K, V> {
   public void put(K key, V value) {
     cache.put(key, value);
 
-    for (WeakReference<HwListener<K, V>> temp : referencesListener) {
-      var listener = temp.get();
-      if (listener != null) {
-        listener.notify(key, value, "put");
-      }
-    }
+    callListeners(key, value, "put");
   }
 
   @Override
@@ -34,35 +29,32 @@ public class MyCache<K, V> implements HwCache<K, V> {
     V value = cache.get(key);
     cache.remove(key);
 
-    for (WeakReference<HwListener<K, V>> temp : referencesListener) {
-      var listener = temp.get();
-      if (listener != null) {
-        listener.notify(key, value, "remove");
-      }
-    }
+    callListeners(key, value, "remove");
   }
 
   @Override
   public V get(K key) {
     V value = cache.get(key);
 
-    for (WeakReference<HwListener<K, V>> temp : referencesListener) {
-      var listener = temp.get();
-      if (listener != null) {
-        listener.notify(key, value, "get");
-      }
-    }
-
+    callListeners(key, value, "get");
     return value;
   }
 
   @Override
   public void addListener(HwListener<K, V> listener) {
+    addListener(listener, false);
+  }
+
+  @Override
+  public void addListener(HwListener<K, V> listener, boolean controlRemove) {
     ReferenceQueue<HwListener<K, V>> referenceQueue = new ReferenceQueue<>();
     WeakReference<HwListener<K, V>> reference = new WeakReference<>(listener, referenceQueue);
 
     referencesListener.add(reference);
-    createThread(reference, referenceQueue);
+
+    if(controlRemove) {
+      createThread(reference, referenceQueue);
+    }
   }
 
   @Override
@@ -70,6 +62,15 @@ public class MyCache<K, V> implements HwCache<K, V> {
     for (WeakReference<HwListener<K, V>> temp : referencesListener) {
       if (temp.get() == listener) {
         temp.enqueue();
+      }
+    }
+  }
+
+  private void callListeners(K key, V value, String action) {
+    for(WeakReference<HwListener<K, V>> temp : referencesListener) {
+      var listener = temp.get();
+      if(listener != null) {
+        listener.notify(key, value, action);
       }
     }
   }

@@ -25,7 +25,7 @@ public class HWCacheDemo {
       }
     };
 
-    cache.addListener(listener);
+    cache.addListener(listener, true);
     cache.put(1, 1);
 
     logger.info("getValue:{}", cache.get(1));

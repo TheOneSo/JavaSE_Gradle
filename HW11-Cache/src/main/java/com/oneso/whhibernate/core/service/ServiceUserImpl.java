@@ -14,7 +14,7 @@ public class ServiceUserImpl implements ServiceUser {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceUserImpl.class);
 
-  private MyCache<Long, User> cache;
+  private final MyCache<Long, User> cache = new MyCache<>();
   HwListener<Long, User> listener = new HwListener<Long, User>() {
     @Override
     public void notify(Long key, User value, String action) {
@@ -30,7 +30,6 @@ public class ServiceUserImpl implements ServiceUser {
     this.useCache = useCache;
 
     if(useCache) {
-      cache = new MyCache<>();
       cache.addListener(listener);
     }
   }
@@ -73,6 +72,10 @@ public class ServiceUserImpl implements ServiceUser {
 
       try {
         Optional<User> userOptional = userDao.findById(id);
+        if(useCache) {
+          cache.put(id, userOptional.orElse(null));
+        }
+
         logger.info("User: {}", userOptional.orElse(null));
         return userOptional;
       } catch (Exception e) {

@@ -14,5 +14,7 @@ public interface HwCache<K, V> {
 
   void addListener(HwListener<K, V> listener);
 
+  void addListener(HwListener<K, V> listener, boolean controlRemove);
+
   void removeListener(HwListener<K, V> listener);
 }
