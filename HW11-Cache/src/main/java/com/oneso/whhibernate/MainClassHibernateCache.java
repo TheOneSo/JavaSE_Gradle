@@ -1,12 +1,9 @@
 package com.oneso.whhibernate;
 
-import com.oneso.cache.HwListener;
-import com.oneso.cache.MyCache;
 import com.oneso.whhibernate.core.dao.UserDao;
 import com.oneso.whhibernate.core.model.Address;
 import com.oneso.whhibernate.core.model.Phone;
 import com.oneso.whhibernate.core.model.User;
-import com.oneso.whhibernate.core.service.ServiceUser;
 import com.oneso.whhibernate.core.service.ServiceUserImpl;
 import com.oneso.whhibernate.hibernate.HibernateUtils;
 import com.oneso.whhibernate.hibernate.dao.UserDaoHibernate;
@@ -18,9 +15,9 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
-public class MainClassHibernate {
+public class MainClassHibernateCache {
 
-  private static final Logger logger = LoggerFactory.getLogger(MainClassHibernate.class);
+  private static final Logger logger = LoggerFactory.getLogger(MainClassHibernateCache.class);
 
   public static void main(String[] args) {
 
