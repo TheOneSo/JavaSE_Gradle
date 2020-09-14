@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+  id 'java'
 }
 
 sourceCompatibility = JavaVersion.VERSION_13
