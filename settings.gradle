@@ -18,4 +18,6 @@ include 'HW10-Hibernate'
 findProject(':HW10-Hibernate')?.name = 'hw10-hibernate'
 include 'HW11-Cache'
 findProject(':HW11-Cache')?.name = 'hw11-cache'
+include 'HW12-WEB'
+findProject(':HW12-WEB')?.name = 'hw12-web'
 

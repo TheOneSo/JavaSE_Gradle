@@ -1,5 +1,5 @@
 plugins {
-  id 'java'
+    id 'java'
 }
 
 sourceCompatibility = JavaVersion.VERSION_13
@@ -10,6 +10,11 @@ dependencies {
     implementation 'com.h2database:h2'
     implementation 'org.hibernate:hibernate-core'
     implementation 'ch.qos.logback:logback-classic'
+    implementation 'com.google.code.gson:gson'
+    implementation 'org.eclipse.jetty:jetty-server'
+    implementation 'org.eclipse.jetty:jetty-webapp'
+    implementation 'org.eclipse.jetty:jetty-security'
+    implementation 'org.freemarker:freemarker'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params'
     testImplementation group: 'org.assertj', name: 'assertj-core'
@@ -23,6 +28,9 @@ test {
     events "passed", "skipped", "failed"
   }
 }
+
+
+compileJava.options.encoding = 'UTF-8'
 
 tasks.withType(JavaCompile) {
   options.with {
