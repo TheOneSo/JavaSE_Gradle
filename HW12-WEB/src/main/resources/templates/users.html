@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8">
+  <title>Админ панель</title>
+</head>
+
+<body>
+<h4>Создать пользователя</h4>
+<a href="users/create">Создать</a>
+
+<h4>Список пользователей</h4>
+<table style="width: 400px">
+  <thead>
+  <tr>
+    <td style="width: 50px">Id</td>
+    <td style="width: 150px">Имя</td>
+    <td style="width: 100px">Адрес</td>
+  </tr>
+  </thead>
+  <tbody>
+  <#list users as item>
+  <tr>
+    <td>${item.id}</td>
+    <td>${item.name}</td>
+    <td>${item.address.street}</td>
+  </tr>
+  </#list>
+  </tbody>
+</table>
+
+</body>
+</html>

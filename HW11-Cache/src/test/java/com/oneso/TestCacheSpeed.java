@@ -1,13 +1,13 @@
 package com.oneso;
 
-import com.oneso.whhibernate.core.dao.UserDao;
-import com.oneso.whhibernate.core.model.Address;
-import com.oneso.whhibernate.core.model.Phone;
-import com.oneso.whhibernate.core.model.User;
-import com.oneso.whhibernate.core.service.ServiceUserImpl;
-import com.oneso.whhibernate.hibernate.HibernateUtils;
-import com.oneso.whhibernate.hibernate.dao.UserDaoHibernate;
-import com.oneso.whhibernate.hibernate.sessionmanager.SessionManagerHibernate;
+import com.oneso.hwhibernate.core.dao.UserDao;
+import com.oneso.hwhibernate.core.model.Address;
+import com.oneso.hwhibernate.core.model.Phone;
+import com.oneso.hwhibernate.core.model.User;
+import com.oneso.hwhibernate.core.service.ServiceUserImpl;
+import com.oneso.hwhibernate.hibernate.HibernateUtils;
+import com.oneso.hwhibernate.hibernate.dao.UserDaoHibernate;
+import com.oneso.hwhibernate.hibernate.sessionmanager.SessionManagerHibernate;
 import org.hibernate.SessionFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
