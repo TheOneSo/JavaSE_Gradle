@@ -2,6 +2,7 @@ package com.oneso.web.server;
 
 import com.oneso.web.helpers.FileSystemHelper;
 import com.oneso.web.services.AuthService;
+import com.oneso.web.services.InitUserService;
 import com.oneso.web.services.TemplateProcessor;
 import com.oneso.web.servlet.AuthorizationFilter;
 import com.oneso.web.servlet.LoginServlet;
@@ -31,9 +32,12 @@ public class UsersWebServerImpl implements UsersWebServer {
   private final TemplateProcessor templateProcessor;
   private final AuthService authService;
   private final ServiceUser serviceUser;
+  private final InitUserService initUserService;
 
-  public UsersWebServerImpl(int port, TemplateProcessor templateProcessor, AuthService authService, ServiceUser serviceUser) {
+  public UsersWebServerImpl(int port, TemplateProcessor templateProcessor, AuthService authService,
+                            ServiceUser serviceUser, InitUserService initUserService) {
     this.serviceUser = serviceUser;
+    this.initUserService = initUserService;
     this.templateProcessor = templateProcessor;
     this.authService = authService;
     this.server = new Server(port);
@@ -88,7 +92,8 @@ public class UsersWebServerImpl implements UsersWebServer {
   private ServletContextHandler createServletContextHandler() {
     ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
     servletContextHandler.addServlet(new ServletHolder(new UsersServlet(serviceUser, templateProcessor)), "/users");
-    servletContextHandler.addServlet(new ServletHolder(new NewUserServlet(serviceUser, templateProcessor)), "/users/create");
+    servletContextHandler.addServlet(new ServletHolder(
+            new NewUserServlet(serviceUser, templateProcessor, initUserService)), "/users/create");
     return servletContextHandler;
   }
 }

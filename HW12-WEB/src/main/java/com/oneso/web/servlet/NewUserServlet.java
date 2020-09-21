@@ -1,6 +1,6 @@
 package com.oneso.web.servlet;
 
-import com.oneso.web.helpers.HibernateHelper;
+import com.oneso.web.services.InitUserService;
 import com.oneso.web.services.TemplateProcessor;
 import com.oneso.hwhibernate.core.service.ServiceUser;
 
@@ -19,10 +19,12 @@ public class NewUserServlet extends HttpServlet {
   private static final String FIELD_ADDRESS = "address";
 
   private final ServiceUser serviceUser;
+  private final InitUserService initUserService;
   private final TemplateProcessor templateProcessor;
 
-  public NewUserServlet(ServiceUser serviceUser, TemplateProcessor templateProcessor) {
+  public NewUserServlet(ServiceUser serviceUser, TemplateProcessor templateProcessor, InitUserService initUserService) {
     this.serviceUser = serviceUser;
+    this.initUserService = initUserService;
     this.templateProcessor = templateProcessor;
   }
 
@@ -38,7 +40,7 @@ public class NewUserServlet extends HttpServlet {
     String phone = req.getParameter(FIELD_PHONE);
     String address = req.getParameter(FIELD_ADDRESS);
 
-    serviceUser.saveUser(HibernateHelper.createUser(name, phone, address));
+    serviceUser.saveUser(initUserService.init(name, phone, address));
     resp.sendRedirect("/users");
   }
 }

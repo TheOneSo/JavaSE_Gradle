@@ -1,9 +1,9 @@
-import com.oneso.hwhibernate.core.model.User;
 import com.oneso.hwhibernate.core.service.ServiceUser;
-import com.oneso.web.helpers.HibernateHelper;
 import com.oneso.web.server.UsersWebServer;
 import com.oneso.web.server.UsersWebServerImpl;
 import com.oneso.web.services.AuthService;
+import com.oneso.web.services.InitUserService;
+import com.oneso.web.services.InitUserServiceImpl;
 import com.oneso.web.services.TemplateProcessor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -36,12 +36,13 @@ class WebServerDemoTest {
     TemplateProcessor templateProcessor = mock(TemplateProcessor.class);
     ServiceUser serviceUser = mock(ServiceUser.class);
     AuthService authService = mock(AuthService.class);
+    InitUserService initUserService = new InitUserServiceImpl();
 
     given(authService.authenticate(DEFAULT_USER_LOGIN, DEFAULT_USER_PASSWORD)).willReturn(true);
     given(authService.authenticate(INCORRECT_USER_LOGIN, DEFAULT_USER_PASSWORD)).willReturn(false);
 
 
-    webServer = new UsersWebServerImpl(WEB_SERVER_PORT, templateProcessor, authService, serviceUser);
+    webServer = new UsersWebServerImpl(WEB_SERVER_PORT, templateProcessor, authService, serviceUser, initUserService);
     webServer.start();
   }
 
