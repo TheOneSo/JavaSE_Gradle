@@ -29,6 +29,7 @@ allprojects {
   ext {
     guavaVersion = "29.0-jre"
     glassfishJson = "1.1.4"
+    reflections = "0.9.12"
   }
 
   apply plugin: "io.spring.dependency-management"
