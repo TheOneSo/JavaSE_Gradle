@@ -36,7 +36,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
-        var reflection = new Reflections("com.oneso.config", new MethodAnnotationsScanner());
+        var reflection = new Reflections(configClass, new MethodAnnotationsScanner());
         List<Method> methods = reflection.getMethodsAnnotatedWith(AppComponent.class).stream()
                 .filter(filter -> filter.getDeclaringClass().equals(configClass))
                 .sorted(Comparator.comparingInt(m -> m.getAnnotation(AppComponent.class).order()))
@@ -52,7 +52,7 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
         for (var aClass : configClasses) {
             checkConfigClass(aClass);
-            var reflection = new Reflections("com.oneso.config", new MethodAnnotationsScanner());
+            var reflection = new Reflections(configClasses, new MethodAnnotationsScanner());
             methods.addAll(reflection.getMethodsAnnotatedWith(AppComponent.class).stream()
                     .filter(filter -> filter.getDeclaringClass().equals(aClass))
                     .collect(Collectors.toList()));
