@@ -8,6 +8,8 @@
  */
 
 rootProject.name = 'javahw'
+include 'HW01-Gradle'
+findProject(':HW01-Gradle')?.name = 'hw01-gradle'
 include 'HW07-ATM'
 findProject(':HW07-ATM')?.name = 'hw07-atm'
 include 'HW08-Gson'
@@ -20,6 +22,5 @@ include 'HW11-Cache'
 findProject(':HW11-Cache')?.name = 'hw11-cache'
 include 'HW12-WEB'
 findProject(':HW12-WEB')?.name = 'hw12-web'
-include 'HW01-Gradle'
-findProject(':HW01-Gradle')?.name = 'hw01-gradle'
-
+include 'HW13-DI'
+findProject(':HW13-DI')?.name = 'hw13-di'
