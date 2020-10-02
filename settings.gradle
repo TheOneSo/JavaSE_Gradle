@@ -24,3 +24,6 @@ include 'HW12-WEB'
 findProject(':HW12-WEB')?.name = 'hw12-web'
 include 'HW13-DI'
 findProject(':HW13-DI')?.name = 'hw13-di'
+include 'HW14-Spring'
+findProject(':HW14-Spring')?.name = 'hw14-spring'
+
