@@ -26,7 +26,7 @@ public class AppTestHibernate {
 
     SessionManagerHibernate sessionManager = new SessionManagerHibernate(sessionFactory);
     UserDao userDao = new UserDaoHibernate(sessionManager);
-    ServiceUserImpl dbServiceUser = new ServiceUserImpl(userDao, true);
+    ServiceUserImpl dbServiceUser = new ServiceUserImpl(userDao, false);
 
     User user = new User();
     Address address = new Address(0, "street #123", user);
@@ -37,6 +37,9 @@ public class AppTestHibernate {
 
     long id = dbServiceUser.saveUser(user);
     Optional<User> mayBeCreatedUser = dbServiceUser.getUser(id);
+
+    List<User> users = dbServiceUser.getUsers();
+    users.forEach(u -> System.out.println(u.getName()));
 
     id = dbServiceUser.saveUser(new User(1L, "А! Нет. Это же совсем не Вася", address, List.of(phone)));
     Optional<User> mayBeUpdatedUser = dbServiceUser.getUser(id);

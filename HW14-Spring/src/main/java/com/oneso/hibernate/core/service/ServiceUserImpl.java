@@ -8,10 +8,13 @@ import com.oneso.hibernate.exceptions.ServiceException;
 import com.oneso.hibernate.core.sessionmanager.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class ServiceUserImpl implements ServiceUser {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceUserImpl.class);
@@ -36,6 +39,7 @@ public class ServiceUserImpl implements ServiceUser {
     }
   }
 
+  @Autowired
   public ServiceUserImpl(UserDao userDao) {
     this(userDao, false);
   }

@@ -8,11 +8,13 @@ import com.oneso.hibernate.core.sessionmanager.SessionManagerHibernate;
 import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public class UserDaoHibernate implements UserDao {
 
   private static final Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
@@ -38,7 +40,7 @@ public class UserDaoHibernate implements UserDao {
   public List<User> findAll() {
     DatabaseSessionHibernate sessionHibernate = sessionManager.getCurrentSession();
     try {
-      return sessionHibernate.getSession().createQuery("select u from Users u", User.class).getResultList();
+      return sessionHibernate.getSession().createQuery("select u from User u", User.class).getResultList();
     } catch (Exception e) {
       logger.error(e.getMessage(), e);
     }
