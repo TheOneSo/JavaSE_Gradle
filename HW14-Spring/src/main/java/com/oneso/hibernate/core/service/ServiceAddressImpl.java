@@ -1,14 +1,14 @@
 package com.oneso.hibernate.core.service;
 
+import com.oneso.hibernate.cache.HwCache;
 import com.oneso.hibernate.cache.HwListener;
-import com.oneso.hibernate.cache.MyCache;
 import com.oneso.hibernate.core.dao.AddressDao;
 import com.oneso.hibernate.core.model.Address;
 import com.oneso.hibernate.exceptions.ServiceException;
 import com.oneso.hibernate.core.sessionmanager.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +18,6 @@ public class ServiceAddressImpl implements ServiceAddress {
 
   private static final Logger logger = LoggerFactory.getLogger(ServiceAddressImpl.class);
 
-  private final MyCache<Long, Address> cache = new MyCache<>();
   HwListener<Long, Address> listener = new HwListener<Long, Address>() {
     @Override
     public void notify(Long key, Address value, String action) {
@@ -27,20 +26,14 @@ public class ServiceAddressImpl implements ServiceAddress {
   };
 
   private final AddressDao addressDao;
-  private final boolean useCache;
+  @Qualifier("addressCache")
+  private final HwCache<Long, Address> cache;
 
-  public ServiceAddressImpl(AddressDao addressDao, boolean useCache) {
+  public ServiceAddressImpl(AddressDao addressDao, HwCache<Long, Address> cache) {
     this.addressDao = addressDao;
-    this.useCache = useCache;
+    this.cache = cache;
 
-    if(useCache) {
-      cache.addListener(listener);
-    }
-  }
-
-  @Autowired
-  public ServiceAddressImpl(AddressDao addressDao) {
-    this(addressDao, false);
+    cache.addListener(listener);
   }
 
   @Override
@@ -53,9 +46,7 @@ public class ServiceAddressImpl implements ServiceAddress {
         long id = address.getId();
         sessionManager.commitSession();
 
-        if(useCache) {
-          cache.put(id, address);
-        }
+        cache.put(id, address);
         logger.info("Address create: {}", id);
         return id;
       } catch (Exception e) {
@@ -68,11 +59,9 @@ public class ServiceAddressImpl implements ServiceAddress {
 
   @Override
   public Optional<Address> getAddress(long id) {
-    if(useCache) {
-      Address address = cache.get(id);
-      if(address != null) {
-        return Optional.of(address);
-      }
+    Address addressCache = cache.get(id);
+    if(addressCache != null) {
+      return Optional.of(addressCache);
     }
 
     try(SessionManager sessionManager = addressDao.getSessionManager()) {
@@ -80,9 +69,7 @@ public class ServiceAddressImpl implements ServiceAddress {
 
       try {
         Optional<Address> addressOptional = addressDao.findById(id);
-        if(useCache) {
-          cache.put(id, addressOptional.orElse(null));
-        }
+        cache.put(id, addressOptional.orElse(null));
 
         logger.info("Address: {}", addressOptional.orElse(null));
         return addressOptional;

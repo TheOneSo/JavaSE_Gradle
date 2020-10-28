@@ -1,14 +1,14 @@
 package com.oneso.hibernate.core.service;
 
+import com.oneso.hibernate.cache.HwCache;
 import com.oneso.hibernate.cache.HwListener;
-import com.oneso.hibernate.cache.MyCache;
 import com.oneso.hibernate.core.dao.PhoneDao;
 import com.oneso.hibernate.core.model.Phone;
 import com.oneso.hibernate.exceptions.ServiceException;
 import com.oneso.hibernate.core.sessionmanager.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +18,6 @@ public class ServicePhoneImpl implements ServicePhone {
 
   private static final Logger logger = LoggerFactory.getLogger(ServicePhoneImpl.class);
 
-  private final MyCache<Long, Phone> cache = new MyCache<>();
   HwListener<Long, Phone> listener = new HwListener<Long, Phone>() {
     @Override
     public void notify(Long key, Phone value, String action) {
@@ -27,20 +26,14 @@ public class ServicePhoneImpl implements ServicePhone {
   };
 
   private final PhoneDao phoneDao;
-  private final boolean useCache;
+  @Qualifier("phoneCache")
+  private final HwCache<Long, Phone> cache;
 
-  public ServicePhoneImpl(PhoneDao phoneDao, boolean useCache) {
+  public ServicePhoneImpl(PhoneDao phoneDao, HwCache<Long, Phone> cache) {
     this.phoneDao = phoneDao;
-    this.useCache = useCache;
+    this.cache = cache;
 
-    if(useCache) {
-      cache.addListener(listener);
-    }
-  }
-
-  @Autowired
-  public ServicePhoneImpl(PhoneDao phoneDao) {
-    this(phoneDao, false);
+    cache.addListener(listener);
   }
 
   @Override
@@ -53,9 +46,7 @@ public class ServicePhoneImpl implements ServicePhone {
         long id = phone.getId();
         sessionManager.commitSession();
 
-        if(useCache) {
-          cache.put(id, phone);
-        }
+        cache.put(id, phone);
         logger.info("Phone create: {}", id);
         return id;
       } catch (Exception e) {
@@ -68,11 +59,9 @@ public class ServicePhoneImpl implements ServicePhone {
 
   @Override
   public Optional<Phone> getPhone(long id) {
-    if(useCache) {
-      Phone phone = cache.get(id);
-      if(phone != null) {
-        return Optional.of(phone);
-      }
+    Phone phoneCache = cache.get(id);
+    if(phoneCache != null) {
+      return Optional.of(phoneCache);
     }
 
     try(SessionManager sessionManager = phoneDao.getSessionManager()) {
@@ -80,9 +69,7 @@ public class ServicePhoneImpl implements ServicePhone {
 
       try {
         Optional<Phone> phoneOptional = phoneDao.findById(id);
-        if(useCache) {
-          cache.put(id, phoneOptional.orElse(null));
-        }
+        cache.put(id, phoneOptional.orElse(null));
 
         logger.info("Phone: {}", phoneOptional.orElse(null));
         return phoneOptional;
