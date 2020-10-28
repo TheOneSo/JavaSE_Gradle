@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Управление пользователей</title>
+    <script>
+        function getUser(url, valueControlName) {
+            const valueControl = document.getElementById(valueControlName);
+            const userDataContainer = document.getElementById('userDataContainer');
+            const fullUrl = url + (valueControl ? (encodeURIComponent(valueControl.value)) : '');
+            fetch(fullUrl)
+                .then(response => response.json())
+                .then(user => userDataContainer.innerHTML = JSON.stringify(user));
+        }
+    </script>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        .users, .users td {
+            border: 1px solid lightgray;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+
+        .create {
+            border: 1px solid red;
+            padding: 5px;
+            box-shadow: 2px 2px black;
+        }
+
+    </style>
+</head>
+<body>
+<h4>Список пользователей</h4>
+<table class="users">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Address</th>
+        <th>Phone</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}">1</td>
+        <td th:text="${user.name}">John</td>
+        <td th:text="${user.address}">#123</td>
+        <td th:text="${user.phone}">+123</td>
+    </tr>
+    </tbody>
+</table>
+<a class="create" href="userCreate.html" th:href="@{/user/create}">Create new User</a>
+
+<h4>Поиск пользователей</h4>
+<div>
+    <input id="userId" type="text" value="1" placeholder="Введите ID">
+    <button onclick="getUser('api/user/', 'userId')">Получить по ID</button>
+</div>
+
+<pre id = "userDataContainer"></pre>
+
+</body>
+</html>
